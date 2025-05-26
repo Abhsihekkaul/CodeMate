@@ -1,11 +1,22 @@
 const express = require("express");
-const App = express();
+const ConnectDB = require("./config/database");
+require("dotenv").config(); 
 
-App.get("/",(req,res)=>{
+const app = express();
+
+app.get("/", (req, res) => {
     res.send("Hey Abhishek");
-})
+});
 
+// Connect to DB and then start server
+ConnectDB()
+  .then(() => {
+    console.log("✅ DB connected successfully");
 
-App.listen(5000,()=>{
-    console.log("You server is build on top of 5000 port number");
-})
+    app.listen(5000, () => {
+      console.log("🚀 Server is running on port 5000");
+    });
+  })
+  .catch((err) => {
+    console.error("❌ Error connecting to DB:", err.message);
+  });
