@@ -6,9 +6,13 @@ const app = express();
 const ValidateSignUp = require("../src/utils/ValidateSignUp");
 const bcyrpt = require('bcrypt');
 const validator = require('validator');
+const cookieParser = require("cookie-parser");
+const jwt = require('jsonwebtoken');
+const UserAuth = require("./Middlewares/Auth")
 
 // Middleware to convert the req.body data from json object to js object so that our server can return this
 app.use(express.json());
+app.use(cookieParser());
 
 
 
@@ -119,10 +123,16 @@ app.post("/Login", async (req, res) => {
       throw new Error("User not found in the database.");
     }
 
-    const isValidPassword = await bcyrpt.compare(Password, user.Password);
+    const isValidPassword = ValidPassword(Password);
     if (!isValidPassword) {
       throw new Error("Password is not valid.");
     }
+
+    // creating jwt token
+    const token = await JWT_Token();
+
+    // attaching the token to the cookie
+    res.cookie("token", token);
 
     res.send("User logged in successfully.");
   } catch (err) {
@@ -130,6 +140,16 @@ app.post("/Login", async (req, res) => {
   }
 });
 
+
+
+app.get("/profile", UserAuth ,  async (req,res)=>{
+  try{
+    const user = req.user;
+    res.send("user");
+  }catch(err){
+    res.status(400).send(err.message);
+  }
+})
 
 // Connect to DB and then start server
 ConnectDB()
