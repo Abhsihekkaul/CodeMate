@@ -20,10 +20,16 @@ const UserAuth = async (req,res,next) => {
         if(!user){
             throw new Error("User does not exist!");
         }
-        res.send(user);
+        req.user = user;
         next();
     }catch(err){
-        res.status(400).send("The Error is " , err.message)
+        if (err.name === "TokenExpiredError") {
+            return res.status(401).json({ error: "Token has expired" });
+        }
+        if (err.name === "JsonWebTokenError") {
+            return res.status(401).json({ error: "Invalid token" });
+        }
+        res.status(400).json({ error: err.message });
     }
 } 
 

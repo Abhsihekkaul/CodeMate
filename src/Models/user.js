@@ -74,7 +74,7 @@ const UserSchema = new mongoose.Schema({
 
 // creating schema methods (Always make sure to keep it all in terms of function not arrow function as we will be using this )
 
-UserSchema.method.JWT_Token = async function(){
+UserSchema.methods.JWT_Token = async function(){
      const user = this;
 
      const token = await jwt.sign({_id : user._id}, "CodeMate$123", {
@@ -84,7 +84,7 @@ UserSchema.method.JWT_Token = async function(){
      return token;
 }  
 
-UserSchema.method.ValidPassword = async function(userInputPassword){
+UserSchema.methods.ValidPassword = async function(userInputPassword){
     const user = this;
     const passwordHash = user.Password;
 
