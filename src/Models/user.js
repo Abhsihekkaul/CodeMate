@@ -71,9 +71,11 @@ const UserSchema = new mongoose.Schema({
     timestamps : true,
 });
 
+// creatig index
+UserSchema.index({firstName : 1});
+UserSchema.index({Gender : 1});
 
 // creating schema methods (Always make sure to keep it all in terms of function not arrow function as we will be using this )
-
 UserSchema.methods.JWT_Token = async function(){
      const user = this;
 

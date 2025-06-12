@@ -5,6 +5,9 @@ const AuthRouter = express.Router();
 const ValidateSignUp = require("../utils/ValidateSignUp");
 const User = require('../Models/user');
 const UserAuth = require("../Middlewares/Auth");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 
 // Signup Route
 AuthRouter.post('/signup', async (req, res) => {
@@ -57,6 +60,14 @@ AuthRouter.post('/login', async (req, res) => {
     // Generate JWT token using instance method
     const token = await user.JWT_Token();
 
+     // ✅ Set token as cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // set to true in production (HTTPS)
+      sameSite: "Lax",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
     res.status(200).json({
       message: "Login successful",
       token,
@@ -95,5 +106,13 @@ AuthRouter.post("/logout", async (req, res) => {
   res.send("logut successful!");
 
 });
+
+// Forget password
+
+// AuthRouter.post("/Forgot", UserAuth, async (req, res) => {
+  
+
+
+// });
 
 module.exports = AuthRouter;

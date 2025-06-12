@@ -3,6 +3,7 @@ const User = require('../Models/user');
 const UserAuth = require('../Middlewares/Auth');
 const validateEditProfileData = require('../utils/ValidateEditProfileData');
 const ProfileRouter = express.Router();
+const bcrypt = require('bcrypt')
 
 ProfileRouter.get("/Profile/View", UserAuth , async (req, res) => {
 
@@ -71,6 +72,32 @@ ProfileRouter.patch("/Profile/edit", UserAuth, async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+ProfileRouter.patch("/Profile/edit", UserAuth, async (req, res) => {
+
+  const {currentPassword, newPassword} = req.body;
+  try{
+
+    const user = req.user;
+
+    const compareOldPassword = await bcrypt.compare(currentPassword, user.Password);
+    if(!compareOldPassword){
+      throw new Error("Password do not Match!");
+    }
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+    user.Password = newPasswordHash;
+
+    await user.save();
+    res.json({ message: "Password updated successfully" });
+
+  }catch(err){
+    res.status(404).send("Error" + err.message);
+  }
+
+})
 
 
 
