@@ -6,7 +6,7 @@ const User = require("../Models/user");
 
 RequestRouter.post("/request/send/:status/:userID", UserAuth, async (req, res) => {
     try {
-        const toUserId = req.params.toUserId;
+        const toUserId = req.params.userID;
         const fromUserId = req.user._id;
         const status = req.params.status.toLowerCase();
 

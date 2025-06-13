@@ -5,8 +5,7 @@ const AuthRouter = express.Router();
 const ValidateSignUp = require("../utils/ValidateSignUp");
 const User = require('../Models/user');
 const UserAuth = require("../Middlewares/Auth");
-const cookieParser = require("cookie-parser");
-app.use(cookieParser());
+
 
 
 // Signup Route

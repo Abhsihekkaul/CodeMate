@@ -21,11 +21,13 @@ const ProfileRouter = require("./routes/ProfileRouter");
 
 const RequestRouter = require("./routes/RequestRouter");
 
+const UserRouter = require("./routes/UserRoute.js");
 
 
 app.use("/", AuthRouter);
 app.use("/", ProfileRouter);
 app.use("/", RequestRouter);
+app.use("/", UserRouter);
 
 // Connect to DB and then start server
 ConnectDB()
