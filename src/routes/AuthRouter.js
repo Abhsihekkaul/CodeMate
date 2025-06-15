@@ -73,6 +73,12 @@ AuthRouter.post('/login', async (req, res) => {
       user: {
         id: user._id,
         firstName: user.firstName,
+        lastName : user.lastName,
+        Age : user.Age,
+        Gender : user.Gender,
+        Skills : user.Skills,
+        About : user.About,
+        PhotoURL : user.PhotoURL,
         Email: user.Email
       }
     });

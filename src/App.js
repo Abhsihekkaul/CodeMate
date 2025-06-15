@@ -9,10 +9,16 @@ const validator = require('validator');
 const cookieParser = require("cookie-parser");
 const jwt = require('jsonwebtoken');
 const UserAuth = require("./Middlewares/Auth")
+const cors = require('cors');
 
 // Middleware to convert the req.body data from json object to js object so that our server can return this
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5173", // or your frontend port
+  credentials: true
+}));
+
 
 
 const AuthRouter = require("./routes/AuthRouter");
