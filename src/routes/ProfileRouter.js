@@ -46,7 +46,7 @@ ProfileRouter.get("/Profile/View", UserAuth , async (req, res) => {
 //   }
 // });
 
-ProfileRouter.patch("/Profile/edit", UserAuth, async (req, res) => {
+ProfileRouter.put("/Profile/edit", UserAuth, async (req, res) => {
   try {
     if (!validateEditProfileData(req)) {
       return res.status(400).json({ error: "Invalid profile data" });
@@ -74,7 +74,7 @@ ProfileRouter.patch("/Profile/edit", UserAuth, async (req, res) => {
 });
 
 
-ProfileRouter.patch("/Profile/edit", UserAuth, async (req, res) => {
+ProfileRouter.patch("/Profile/Password/edit", UserAuth, async (req, res) => {
 
   const {currentPassword, newPassword} = req.body;
   try{

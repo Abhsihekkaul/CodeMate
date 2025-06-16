@@ -107,8 +107,12 @@ AuthRouter.delete("/delUser", async (req, res) => {
 // Delete User Route
 AuthRouter.post("/logout", async (req, res) => {
   
-  res.cookie("token",null, {expiresIn : new Date(Date.now())});
-  res.send("logut successful!");
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true
+  });
+  res.status(200).send("Logout successful!");
 
 });
 

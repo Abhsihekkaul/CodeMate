@@ -11,24 +11,30 @@ const jwt = require('jsonwebtoken');
 const UserAuth = require("./Middlewares/Auth")
 const cors = require('cors');
 
-// Middleware to convert the req.body data from json object to js object so that our server can return this
+// CORS Configuration - MUST be before other middleware
+// const corsOptions = {
+//   , // Add both variations
+//   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+//   credentials: true,
+//   optionsSuccessStatus: 200 // For legacy browser support
+//};
+
+// Apply CORS middleware FIRST
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  credentials: true,
+}));
+// Other middleware AFTER CORS
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost:5173", // or your frontend port
-  credentials: true
-}));
 
-
-
+// Routes
 const AuthRouter = require("./routes/AuthRouter");
-
 const ProfileRouter = require("./routes/ProfileRouter");
-
 const RequestRouter = require("./routes/RequestRouter");
-
 const UserRouter = require("./routes/UserRoute.js");
-
 
 app.use("/", AuthRouter);
 app.use("/", ProfileRouter);
@@ -41,6 +47,7 @@ ConnectDB()
     console.log("DB connected successfully");
     app.listen(10000, () => {
       console.log("Server is running on port 10000");
+      // console.log("CORS enabled for:", corsOptions.origin);
     });
   })
   .catch((err) => {

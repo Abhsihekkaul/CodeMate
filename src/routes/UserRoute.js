@@ -99,16 +99,15 @@ UserRouter.get("/feed", UserAuth, async (req, res) => {
         });
 
         // Also exclude the logged-in user themselves
-        //hiddenUserIdsSet.add(LoggedInUser._id.toString());
+        // hiddenUserIdsSet.add(LoggedInUser._id.toString()); // Uncomment if needed
 
         // Step 3: Fetch users not in hidden list
         const users = await User.find({
             $and: [
-                { _id: { $nin: Array.from(HiddenUser) } },
+                { _id: { $nin: Array.from(hiddenUserIdsSet) } }, // ✅ FIXED: Changed HiddenUser to hiddenUserIdsSet
                 { _id: { $ne: LoggedInUser._id } }
             ]
         });
-
 
         res.status(200).json({
             message: "Feed data fetched successfully",
