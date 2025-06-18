@@ -38,8 +38,6 @@ UserRouter.get("/user/request/received", UserAuth, async (req, res) => {
 
 UserRouter.get("/user/connections", UserAuth, async (req, res) => {
     try {
-        console.log("🔐 Logged in user:", req.user);
-
         const requests = await ConnectionRequest.find({
             $or: [
                 { toUserId: req.user._id },
@@ -89,7 +87,6 @@ UserRouter.get("/feed", UserAuth, async (req, res) => {
                 { fromUserId: LoggedInUser._id },
             ]
         }).select("toUserId fromUserId");
-
         // Step 2: Create a Set of user IDs to exclude from feed
         const hiddenUserIdsSet = new Set();
 
