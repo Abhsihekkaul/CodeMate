@@ -100,4 +100,66 @@ RequestRouter.post("/request/review/:status/:requestID", UserAuth, async (req, r
   }
 });
 
+RequestRouter.get("/connection/accepted/:FriendID", UserAuth, async (req, res) => {
+  try {
+    const LoggedInUser = req.user._id;
+    const FriendID = req.params.FriendID;
+
+    if (!FriendID) {
+      return res.status(400).json({ message: "FriendID is required" });
+    }
+
+    // Check if FriendID is a valid user
+    const friendUser = await User.findById(FriendID);
+    if (!friendUser) {
+      return res.status(404).json({ message: "FriendID does not exist in the database" });
+    }
+
+    // Find the accepted connection request between users
+    const connection = await ConnectionRequest.findOne({
+      $or: [
+        { fromUserId: LoggedInUser, toUserId: FriendID },
+        { fromUserId: FriendID, toUserId: LoggedInUser },
+      ],
+      status: "accepted" 
+    });
+
+    if (!connection) {
+      return res.status(404).json({ message: "No accepted connection found between users" });
+    }
+
+    res.status(200).json({ connectionId: connection._id});
+  } catch (err) {
+    res.status(500).json({
+      message: `Error: ${err.message}`,
+    });
+  }
+});
+
+RequestRouter.delete("/connections/delete/:requestId", UserAuth, async (req, res) => {
+  try {
+    const userID = req.user._id; // ensure you're using ._id
+    const RequestID = req.params.requestId;
+
+    const CheckRequest = await ConnectionRequest.findById(RequestID);
+
+    if (
+      !CheckRequest ||
+      (CheckRequest.fromUserId.toString() !== userID.toString() &&
+       CheckRequest.toUserId.toString() !== userID.toString())
+    ) {
+      return res.status(403).json({ message: "Not authorized or request not found" });
+    }
+
+    await ConnectionRequest.findByIdAndDelete(RequestID);
+    res.status(200).json({ message: "Connection request removed" });
+
+  } catch (err) {
+    res.status(500).json({
+      message: `Error: ${err.message}`,
+    });
+  }
+});
+
+
 module.exports = RequestRouter;
