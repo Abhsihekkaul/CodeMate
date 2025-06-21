@@ -11,15 +11,23 @@ const UserAuth = require("../Middlewares/Auth");
 // Signup Route
 AuthRouter.post('/signup', async (req, res) => {
   try {
-    // Validate request body
-    ValidateSignUp(req);
+    const errorMessage = ValidateSignUp(req);
+    if (errorMessage) {
+      return res.status(400).json({ error: errorMessage });
+    }
 
-    const { firstName, lastName, Password, Email, Age, Skills, PhotoURL} = req.body;
-
-    // Encrypt the password
+    const { firstName, lastName, Password, Email, Age, Skills, PhotoURL } = req.body;
     const encryptedPassword = await bcrypt.hash(Password, 10);
 
-    // Create new user instance
+    const ExistEmailAdress = await User.findOne({
+      Email : Email,
+    })
+
+    if (ExistEmailAdress) {
+      return res.status(409).json({ error: "Email already exists. Please try with different email." });
+    }
+
+
     const newUser = new User({
       firstName,
       lastName,
@@ -31,13 +39,13 @@ AuthRouter.post('/signup', async (req, res) => {
     });
 
     await newUser.save();
-
     res.status(201).send("User Created Successfully");
   } catch (error) {
     console.error("Error creating user:", error.message);
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 // Login Route
 AuthRouter.post('/login', async (req, res) => {
