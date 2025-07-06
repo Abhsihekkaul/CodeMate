@@ -10,7 +10,6 @@ const cookieParser = require("cookie-parser");
 const jwt = require('jsonwebtoken');
 const UserAuth = require("./Middlewares/Auth")
 const cors = require('cors');
-
 // CORS Configuration - MUST be before other middleware
 // const corsOptions = {
 //   , // Add both variations
@@ -40,11 +39,15 @@ app.use("/", ProfileRouter);
 app.use("/", RequestRouter);
 app.use("/", UserRouter);
 
+const http = require('http');
+const initilizeSocket = require("./utils/socket.js");
+const server = http.createServer(app);
+initilizeSocket(server);
 // Connect to DB and then start server
 ConnectDB()
   .then(() => {
     console.log("DB connected successfully");
-    app.listen(10000, () => {
+    server.listen(10000, () => {
       console.log("Server is running on port 10000");
       // console.log("CORS enabled for:", corsOptions.origin);
     });
